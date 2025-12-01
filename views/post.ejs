@@ -1,0 +1,23 @@
+<%- include('head') %>
+
+    <main class="animate-fade-in">
+
+        <div class="mb-8">
+            <a href="/" class="text-muted hover:text-white transition-colors text-sm link-underline no-underline">
+                &larr; Back
+            </a>
+        </div>
+
+        <article class="prose max-w-none">
+            <span class="text-muted text-sm block mb-8 pb-4 border-b border-gray-800">
+                <%= metadata.date.toLocaleDateString('en-US',{ year:'numeric', month:'short', day:'numeric' }) %>
+            </span>
+
+            <%- content %>
+        </article>
+
+    </main>
+
+    </body>
+
+    </html>

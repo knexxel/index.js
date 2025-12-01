@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='black'/><text x='20' y='65' font-size='60' fill='white' font-family='monospace'>&gt;_</text></svg>">
+    <title>
+        <%= title %>
+    </title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#111111',
+                        foreground: '#ededed',
+                        muted: '#888888',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                    typography: {
+                        DEFAULT: {
+                            css: {
+                                color: '#ededed',
+                                '--tw-prose-body': '#ededed',
+                                '--tw-prose-headings': '#fff',
+                                '--tw-prose-links': '#ededed',
+                                '--tw-prose-bold': '#fff',
+                                '--tw-prose-counters': '#fff',
+                                '--tw-prose-bullets': '#fff',
+                                '--tw-prose-hr': '#333',
+                                '--tw-prose-quotes': '#888',
+                                '--tw-prose-quote-borders': '#333',
+                                '--tw-prose-captions': '#888',
+                                '--tw-prose-code': '#ededed',
+                                '--tw-prose-pre-code': '#ededed',
+                                '--tw-prose-pre-bg': '#111',
+
+                                maxWidth: 'none',
+                                lineHeight: '1.75',
+
+                                h1: { color: '#fff', fontWeight: '700', marginTop: '0', marginBottom: '0.8em' },
+                                h2: { color: '#fff', fontWeight: '600', marginTop: '2em', marginBottom: '0.6em' },
+                                h3: { color: '#fff', fontWeight: '500', marginTop: '1.6em', marginBottom: '0.6em' },
+                                h4: { color: '#fff', fontWeight: '400' },
+
+                                a: {
+                                    color: '#ededed',
+                                    textDecoration: 'underline',
+                                    textDecorationColor: '#666',
+                                    textUnderlineOffset: '4px',
+                                    fontWeight: 'inherit',
+                                },
+
+                                ul: { listStyleType: 'disc', paddingLeft: '1.625em' },
+                                ol: { listStyleType: 'decimal', paddingLeft: '1.625em' },
+                                li: { color: '#fff', marginTop: '0.5em', marginBottom: '0.5em' },
+                                'ul > li::marker': { color: '#fff' },
+                                'ol > li::marker': { color: '#fff' },
+
+                                blockquote: {
+                                    borderLeftWidth: '4px',
+                                    borderLeftColor: '#333',
+                                    paddingLeft: '1.5rem',
+                                    color: '#888',
+                                },
+
+                                code: {
+                                    color: '#ededed',
+                                    backgroundColor: '#222',
+                                    padding: '0.2rem 0.4rem',
+                                    borderRadius: '3px',
+                                    fontWeight: '400',
+                                    fontSize: '0.9em'
+                                },
+                                pre: {
+                                    backgroundColor: '#161616',
+                                    border: '1px solid #333',
+                                    borderRadius: '0.5rem',
+                                    padding: '1.25rem',
+                                    overflowX: 'auto'
+                                },
+
+                                hr: {
+                                    borderColor: '#333',
+                                    borderTopWidth: '1px'
+                                },
+
+                                table: {
+                                    width: '100%',
+                                    borderCollapse: 'collapse',
+                                    textAlign: 'left',
+                                    borderWidth: '1px',
+                                    borderColor: '#333'
+                                },
+                                thead: {
+                                    backgroundColor: '#1a1a1a',
+                                    borderBottomWidth: '1px',
+                                    borderBottomColor: '#333'
+                                },
+                                'thead th': {
+                                    color: '#fff',
+                                    fontWeight: '600',
+                                    padding: '0.75em',
+                                    borderWidth: '1px',
+                                    borderColor: '#333'
+                                },
+                                'tbody td': {
+                                    padding: '0.75em',
+                                    color: '#ededed',
+                                    borderWidth: '1px',
+                                    borderColor: '#333'
+                                },
+
+                                img: {
+                                    marginTop: '2em',
+                                    marginBottom: '2em',
+                                    borderRadius: '0.5rem',
+                                    display: 'block',
+                                    marginLeft: 'auto',
+                                    marginRight: 'auto'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #111111;
+            color: #ededed;
+            font-family: 'Inter', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .link-underline {
+            text-decoration: underline;
+            text-decoration-color: #555;
+            text-underline-offset: 4px;
+            transition: text-decoration-color 0.2s ease;
+        }
+
+        .link-underline:hover {
+            text-decoration-color: #ededed;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col px-6 py-12 md:py-20 max-w-2xl mx-auto">

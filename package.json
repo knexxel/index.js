@@ -1,0 +1,23 @@
+{
+  "name": "index.js",
+  "version": "1.0.0",
+  "description": "a minimal express js web application that includes a lightweight blog engine that renders markdown post.",
+  "license": "MIT",
+  "author": "knexxel",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node api/index.js",
+    "dev": "vercel dev"
+  },
+  "engine": {
+    "node": ">=24.x"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "gray-matter": "^4.0.3",
+    "marked": "^17.0.1"
+  }
+}

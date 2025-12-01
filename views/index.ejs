@@ -1,0 +1,66 @@
+<%- include('head') %>
+
+    <header class="mb-16 animate-fade-in">
+        <div class="text-muted text-lg mb-8 font-medium">
+            <%= url%>
+        </div>
+
+        <div class="space-y-4">
+            <p class="text-muted text-sm font-light tracking-wide">
+                /home/knxl/index.html
+            </p>
+
+            <p class="text-xl md:text-2xl text-foreground leading-relaxed">
+                <strong class="text-white font-bold">>_ </strong>Hi there, I'm <strong class="text-white font-bold">皇帝 | Emperor</strong>.
+            </p>
+        </div>
+    </header>
+
+    <main class="animate-fade-in">
+        <h2 class="text-3xl font-bold text-white mb-8 tracking-tight">Blog</h2>
+
+        <div class="space-y-6">
+            <% if (posts.length===0) { %>
+                <p class="text-muted italic">No posts yet.</p>
+                <% } %>
+
+                    <% posts.forEach((post)=> { %>
+                        <a href="/blog/<%= post.slug %>"
+                            class="group flex flex-col md:flex-row md:items-baseline md:justify-between no-underline cursor-pointer">
+                            <span class="text-lg text-foreground link-underline font-medium transition-colors">
+                                <%= post.metadata.title %>
+                            </span>
+
+                            <span
+                                class="text-muted text-sm md:text-base mt-1 md:mt-0 whitespace-nowrap md:ml-6 font-normal">
+                                <%= post.metadata.date.toLocaleDateString('en-US',{ year:'numeric', month:'short',
+                                    day:'numeric' }) %>
+                            </span>
+                        </a>
+                        <% }); %>
+        </div>
+
+        <% if (hasMore) { %>
+            <div class="mt-6">
+                <a href="/blog" class="text-foreground link-underline text-lg no-underline">
+                    All posts &rarr;
+                </a>
+            </div>
+            <% } %>
+
+                <h2 class="text-3xl font-bold text-white mb-4 tracking-tight mt-16">Links</h2>
+
+                <div class="flex space-x-6">
+                    <a href="mailto:knexxel@duck.com" class="text-foreground link-underline text-lg underline">
+                        email me
+                    </a>
+                    <a href="https://github.com/knexxel" class="text-foreground link-underline text-lg underline">
+                        github
+                    </a>
+                </div>
+
+    </main>
+
+    </body>
+
+    </html>
