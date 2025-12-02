@@ -8,45 +8,54 @@ const PORT = process.env.PORT || 8080;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
 
 const getPosts = () => {
-  const contentDir = path.join(__dirname, 'posts');
+  const contentDir = path.join(__dirname, "posts");
 
   if (!fs.existsSync(contentDir)) {
     fs.mkdirSync(contentDir);
     return [];
   }
 
-  const files = fs.readdirSync(contentDir)
-    .filter(f => path.extname(f).toLowerCase() === '.md');
+  const files = fs
+    .readdirSync(contentDir)
+    .filter((f) => path.extname(f).toLowerCase() === ".md");
 
-  const posts = files.map(filename => {
-    const slug = path.basename(filename, '.md');
-    const filePath = path.join(contentDir, filename);
-    try {
-      const markdown = fs.readFileSync(filePath, 'utf8');
-      const { data: metadata } = matter(markdown);
+  const posts = files
+    .map((filename) => {
+      const slug = path.basename(filename, ".md");
+      const filePath = path.join(contentDir, filename);
 
-      const date = metadata && metadata.date ? new Date(metadata.date) : new Date(0);
+      try {
+        const markdown = fs.readFileSync(filePath, "utf8");
+        const parsed = matter(markdown);
 
-      return {
-        slug,
-        filename,
-        metadata: {
-          ...(metadata || {}),
-          date
+        if (!parsed.data || Object.keys(parsed.data).length === 0) {
+          return null;
         }
-      };
-    } catch (err) {
-      console.error('Failed to read post file:', filename, err);
-      return null;
-    }
-  }).filter(Boolean);
+
+        const metadata = parsed.data;
+        const date = metadata.date ? new Date(metadata.date) : new Date(0);
+
+        return {
+          slug,
+          filename,
+          metadata: {
+            ...metadata,
+            date,
+          },
+        };
+      } catch (err) {
+        console.error("Failed to read post file:", filename, err);
+        return null;
+      }
+    })
+    .filter(Boolean); 
 
   posts.sort((a, b) => +b.metadata.date - +a.metadata.date);
   return posts;
-}
+};
+
 
 app.get('/', (req, res) => {
   try {
@@ -68,7 +77,7 @@ app.get('/', (req, res) => {
       hasMore
     });
   } catch (err) {
-    console.error('Error rendering index', err);
+    console.error('Error rendering index.ejs', err);
     res.status(500).send('500: Internal Server Error');
   }
 });
@@ -84,7 +93,7 @@ app.get('/blog', (req, res) => {
       posts: allWithUrls
     });
   } catch (err) {
-    console.error('Error rendering blogs', err);
+    console.error('Error rendering blogs.ejs', err);
     res.status(500).send('500: Internal Server Error');
   }
 });
@@ -115,7 +124,7 @@ app.get('/blog/:slug', async (req, res) => {
       content: html
     });
   } catch (err) {
-    console.error('Error rendering post', slug, err);
+    console.error('Error rendering post.ejs', slug, err);
     res.status(500).send('500: Internal Server Error');
   }
 });
@@ -136,4 +145,3 @@ if (require.main === module) {
     console.log(`Server running at http://localhost:${PORT}`);
   });
 }
-
