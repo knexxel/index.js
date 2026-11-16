@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
 const sanitizeHtml = require('sanitize-html');
-const { marked } = require('marked');
+const marked = require('marked');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
