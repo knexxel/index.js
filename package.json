@@ -12,28 +12,19 @@
     "start": "npm run build:css && node api/index.js",
     "dev": "npm run build:css && vercel dev"
   },
-  "engine": {
-    "node": ">=24.x"
+  "engines": {
+    "node": "24.x"
   },
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "gray-matter": "^4.0.3",
-    "htmlparser2": "^8.0.0",
     "marked": "^17.0.1",
-    "sanitize-html": "^2.18.2"
-  },
-  "overrides": {
-    "sanitize-html": {
-      "htmlparser2": "^8.0.0"
-    }
+    "sanitize-html": "2.16.0"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.11",
     "@tailwindcss/typography": "^0.5.20",
     "tailwindcss": "^4.1.11"
-  },
-  "overrides": {
-    "postcss-selector-parser": "^6.1.5"
   }
 }

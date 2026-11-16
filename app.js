@@ -3,7 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
 const sanitizeHtml = require('sanitize-html');
-const marked = require('marked');
+
+let markedPromise;
+const getMarked = () => (markedPromise ??= import('marked'));
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -35,12 +37,12 @@ const normalizeMarkdown = (markdown) => {
   return withoutCodeIndentation;
 };
 
-const sanitizeMarkdown = (markdown) => {
+const sanitizeMarkdown = async (markdown) => {
+  const { marked } = await getMarked();
   const normalizedMarkdown = normalizeMarkdown(markdown);
   const rawHtml = marked.parse(normalizedMarkdown, {
     breaks: true,
     gfm: true,
-    headerIds: false,
   });
 
   return sanitizeHtml(rawHtml, {
@@ -91,7 +93,6 @@ const getPosts = () => {
   const contentDir = path.join(__dirname, "posts");
 
   if (!fs.existsSync(contentDir)) {
-    fs.mkdirSync(contentDir);
     return [];
   }
 
@@ -192,7 +193,7 @@ app.get('/blog/:slug', async (req, res) => {
     const markdown = fs.readFileSync(filePath, 'utf8');
     const { data: metadata, content } = matter(markdown);
 
-    const html = sanitizeMarkdown(content);
+    const html = await sanitizeMarkdown(content);
 
     res.render('post', {
       metadata,
