@@ -2,12 +2,90 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
+const sanitizeHtml = require('sanitize-html');
+const { marked } = require('marked');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+const normalizeMarkdown = (markdown) => {
+  const withoutTaskCheckboxes = markdown
+    .replace(/^\s*[-*+] \[[ xX]\]\s+/gm, '- ')
+    .replace(/^\s*\d+\. \[[ xX]\]\s+/gm, '1. ');
+
+  const withoutCodeIndentation = withoutTaskCheckboxes.replace(/```[\s\S]*?```/g, (match) => {
+    const lines = match.split('\n');
+    if (lines.length < 3) return match;
+
+    const openingFence = lines[0];
+    const closingFence = lines[lines.length - 1];
+    const codeLines = lines.slice(1, -1);
+
+    const trimmed = codeLines
+      .map((line) => line.replace(/^\s+/, ''))
+      .join('\n');
+
+    return `${openingFence}\n${trimmed}\n${closingFence}`;
+  });
+
+  return withoutCodeIndentation;
+};
+
+const sanitizeMarkdown = (markdown) => {
+  const normalizedMarkdown = normalizeMarkdown(markdown);
+  const rawHtml = marked.parse(normalizedMarkdown, {
+    breaks: true,
+    gfm: true,
+    headerIds: false,
+  });
+
+  return sanitizeHtml(rawHtml, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'span', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'hr', 's', 'del'
+    ]),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      a: ['href', 'name', 'target', 'rel'],
+      img: ['src', 'alt', 'title'],
+      '*': ['class']
+    },
+    allowedSchemes: ['http', 'https', 'mailto', 'data'],
+    transformTags: {
+      a: (_tagName, attribs) => ({
+        tagName: 'a',
+        attribs: {
+          ...attribs,
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        }
+      })
+    }
+  });
+};
+
+const resolvePostPath = (slug) => {
+  if (typeof slug !== 'string' || slug.trim().length === 0) {
+    return null;
+  }
+
+  const normalizedSlug = slug.trim();
+  if (!/^[A-Za-z0-9_-]+$/.test(normalizedSlug) || normalizedSlug.includes('..')) {
+    return null;
+  }
+
+  const postsDir = path.resolve(__dirname, 'posts');
+  const filePath = path.resolve(postsDir, `${normalizedSlug}.md`);
+
+  if (filePath !== postsDir && !filePath.startsWith(postsDir + path.sep)) {
+    return null;
+  }
+
+  return filePath;
+};
 
 const getPosts = () => {
   const contentDir = path.join(__dirname, "posts");
@@ -52,7 +130,7 @@ const getPosts = () => {
     })
     .filter(Boolean); 
 
-  posts.sort((a, b) => +b.metadata.date - +a.metadata.date);
+  posts.sort((a, b) => Number(new Date(b.metadata.date)) - Number(new Date(a.metadata.date)));
   return posts;
 };
 
@@ -100,9 +178,9 @@ app.get('/blog', (req, res) => {
 
 app.get('/blog/:slug', async (req, res) => {
   const { slug } = req.params;
-  const filePath = path.join(__dirname, 'posts', `${slug}.md`);
+  const filePath = resolvePostPath(slug);
 
-  if (!fs.existsSync(filePath)) {
+  if (!filePath || !fs.existsSync(filePath)) {
     return res.status(404).render('error', {
       title: '404 - Not Found',
       message: `The page you are looking for does not exist.`,
@@ -113,10 +191,8 @@ app.get('/blog/:slug', async (req, res) => {
   try {
     const markdown = fs.readFileSync(filePath, 'utf8');
     const { data: metadata, content } = matter(markdown);
-    
-    const { marked } = await import('marked');
 
-    const html = marked.parse(content);
+    const html = sanitizeMarkdown(content);
 
     res.render('post', {
       metadata,
